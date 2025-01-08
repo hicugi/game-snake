@@ -8,11 +8,16 @@
     <h1>Snake</h1>
 
     <div class="board">
-      <div class="overlay">
+      <div id="start" class="overlay">
         <button class="btn" onClick="start()">Start</button>
+      </div>
+      <div id="restart" class="overlay overlay--hide">
+        <h2>Game over</h2>
+        <button class="btn" onClick="start()">Try again</button>
       </div>
 
       <table id="game"></table>
+      <p>score: <strong id="score">0</strong></p>
     </div>
 
     <script src="script.js"></script>

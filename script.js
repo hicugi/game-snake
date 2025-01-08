@@ -19,7 +19,7 @@ const gameBoard = Array.from(
   { length: BOARD_SIZE },
   () => new Array(BOARD_SIZE),
 );
-const activeList = [[0, 0]];
+let activeList = null;
 let direction = "R";
 let foodLocation = null;
 
@@ -42,13 +42,12 @@ function activateCell(r, c) {
     }
     game.appendChild(tr);
   }
-
-  activateCell(0, 0);
 })();
 
-function hideOverlay() {
-  const elm = document.querySelector(".overlay");
-  elm.classList.add("overlay--hide");
+function hideOverlays() {
+  document.querySelectorAll(".overlay").forEach((elm) => {
+    elm.classList.add("overlay--hide");
+  });
 }
 
 function insertFood() {
@@ -75,11 +74,25 @@ function insertFood() {
 let engineInterval = null;
 function gameOver() {
   clearInterval(engineInterval);
-  alert("Game over");
+
+  const overlay = document.querySelector("#restart");
+  overlay.classList.remove("overlay--hide");
+  overlay.querySelector("button").focus();
+}
+
+function updateScore() {
+  document.querySelector("#score").innerText = activeList.length;
 }
 
 function startEngine() {
+  activeList = [[0, 0]];
   direction = "R";
+  activateCell(0, 0);
+  updateScore();
+
+  document.querySelectorAll(`.${ACTIVE_CLASS_NAME}`).forEach((elm) => {
+    elm.classList.remove(ACTIVE_CLASS_NAME);
+  });
 
   function move(r, c) {
     if (r === BOARD_SIZE || r < 0 || c === BOARD_SIZE || c < 0) {
@@ -105,6 +118,7 @@ function startEngine() {
     if (r === foodLocation[0] && c === foodLocation[1]) {
       activeList.push(current);
       insertFood();
+      updateScore();
       return;
     }
 
@@ -136,7 +150,7 @@ function startEngine() {
 }
 
 function start() {
-  hideOverlay();
+  hideOverlays();
   insertFood();
   startEngine();
 }
