@@ -1,7 +1,18 @@
-const SPEED = 256;
-const BOARD_SIZE = 64; // pixels
+const SPEED = 180;
+const BOARD_SIZE = 16; // pixels
 const ACTIVE_CLASS_NAME = "snake";
 const FOOD_CLASS_NAME = "food";
+
+const KEY_MAPPING = {
+  KeyW: "U",
+  KeyD: "R",
+  KeyS: "D",
+  KeyA: "L",
+  ArrowUp: "U",
+  ArrowRight: "R",
+  ArrowDown: "D",
+  ArrowLeft: "L",
+};
 
 const game = document.querySelector("#game");
 const gameBoard = Array.from(
@@ -41,7 +52,7 @@ function hideOverlay() {
 }
 
 function insertFood() {
-  const prevFood = game.querySelector(FOOD_CLASS_NAME);
+  const prevFood = game.querySelector(`.${FOOD_CLASS_NAME}`);
   if (prevFood) prevFood.classList.remove(FOOD_CLASS_NAME);
 
   const getRandom = () => parseInt(Math.random() * BOARD_SIZE);
@@ -68,6 +79,8 @@ function gameOver() {
 }
 
 function startEngine() {
+  direction = "R";
+
   function move(r, c) {
     if (r === BOARD_SIZE || r < 0 || c === BOARD_SIZE || c < 0) {
       gameOver();
@@ -79,6 +92,12 @@ function startEngine() {
     let current = [r, c];
     for (let i = 0; i < activeList.length; i++) {
       const v = activeList[i];
+
+      if (v[0] === r && v[1] === c) {
+        gameOver();
+        return;
+      }
+
       activeList[i] = current;
       current = v;
     }
@@ -94,10 +113,23 @@ function startEngine() {
   }
 
   engineInterval = setInterval(() => {
+    const [r, c] = activeList[0];
+
     switch (direction) {
       case "R":
-        const [r, c] = activeList[0];
         move(r, c + 1);
+        break;
+
+      case "L":
+        move(r, c - 1);
+        break;
+
+      case "U":
+        move(r - 1, c);
+        break;
+
+      case "D":
+        move(r + 1, c);
         break;
     }
   }, SPEED);
@@ -108,3 +140,17 @@ function start() {
   insertFood();
   startEngine();
 }
+
+document.body.addEventListener("keydown", (e) => {
+  const { key } = e;
+  const value = KEY_MAPPING[key];
+
+  if (value === undefined) return;
+
+  if (direction + value === "UD") return;
+  if (direction + value === "DU") return;
+  if (direction + value === "LR") return;
+  if (direction + value === "RL") return;
+
+  direction = value;
+});
