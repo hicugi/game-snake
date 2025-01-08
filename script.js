@@ -4,10 +4,10 @@ const ACTIVE_CLASS_NAME = "snake";
 const FOOD_CLASS_NAME = "food";
 
 const KEY_MAPPING = {
-  KeyW: "U",
-  KeyD: "R",
-  KeyS: "D",
-  KeyA: "L",
+  w: "U",
+  d: "R",
+  s: "D",
+  a: "L",
   ArrowUp: "U",
   ArrowRight: "R",
   ArrowDown: "D",
