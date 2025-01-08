@@ -1,0 +1,14 @@
+h1 {
+  text-align: center;
+}
+
+#game {
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: collapse;
+}
+#game td {
+  width: 4px;
+  height: 4px;
+  border: 1px solid #dcdcdc;
+}
