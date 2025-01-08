@@ -11,4 +11,10 @@ const game = document.querySelector("#game");
     }
     game.appendChild(tr);
   }
+
+  game.querySelector("td").classList.add("active");
 })();
+
+function start() {
+  alert("hey");
+}
