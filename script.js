@@ -59,6 +59,7 @@ function deactivateCell(r, c) {
 function setupStartingPoint() {
   activeList = [[0, 0]];
   direction = "R";
+  nextDirection = "R";
   activateCell(0, 0);
   updateScore();
 }
