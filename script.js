@@ -1,5 +1,5 @@
 const SPEED = 180;
-const BOARD_SIZE = 16; // pixels
+const BOARD_SIZE = 4; // pixels
 const ACTIVE_CLASS_NAME = "snake";
 const FOOD_CLASS_NAME = "food";
 
@@ -19,7 +19,7 @@ const gameBoard = Array.from(
   { length: BOARD_SIZE },
   () => new Array(BOARD_SIZE),
 );
-let activeList = null;
+let activeList = [];
 let direction = "R";
 let foodLocation = null;
 
@@ -29,6 +29,15 @@ let foodLocation = null;
  */
 function activateCell(r, c) {
   gameBoard[r][c].classList.add(ACTIVE_CLASS_NAME);
+  gameBoard[r][c].isActive = true;
+}
+/**
+ * @param {number} row
+ * @param {number} cell
+ */
+function deactivateCell(r, c) {
+  gameBoard[r][c].classList.remove(ACTIVE_CLASS_NAME);
+  gameBoard[r][c].isActive = false;
 }
 
 (() => {
@@ -44,6 +53,12 @@ function activateCell(r, c) {
   }
 })();
 
+function setupStartingPoint() {
+  activeList = [[0, 0]];
+  direction = "R";
+  activateCell(0, 0);
+  updateScore();
+}
 function hideOverlays() {
   document.querySelectorAll(".overlay").forEach((elm) => {
     elm.classList.add("overlay--hide");
@@ -54,28 +69,40 @@ function insertFood() {
   const prevFood = game.querySelector(`.${FOOD_CLASS_NAME}`);
   if (prevFood) prevFood.classList.remove(FOOD_CLASS_NAME);
 
-  const getRandom = () => parseInt(Math.random() * BOARD_SIZE);
+  const availableCells = (() => {
+    const result = new Array((BOARD_SIZE ** 2) - activeList.length);
+    let idx = 0;
 
-  for (i = 0; i < 1e9; i++) {
-    const r = getRandom();
-    const c = getRandom();
+    for (let r = 0; r < BOARD_SIZE; r++) {
+      for (let c = 0; c < BOARD_SIZE; c++) {
+        if (gameBoard[r][c].isActive) continue;
+        result[idx] = [r, c];
+        idx += 1;
+      }
+    }
 
-    const isActive = gameBoard[r][c].classList.contains(ACTIVE_CLASS_NAME);
-    if (isActive) continue;
+    return result;
+  })();
 
-    gameBoard[r][c].classList.add(FOOD_CLASS_NAME);
-    foodLocation = [r, c];
-    return;
-  }
-
-  alert("Couldn't generate a food");
+  const idx = parseInt(Math.random() * availableCells.length);
+  const [r, c] = availableCells[idx];
+  gameBoard[r][c].classList.add(FOOD_CLASS_NAME);
+  foodLocation = [r, c];
 }
 
 let engineInterval = null;
-function gameOver() {
+/**
+ * @param {boolean} isWin
+ */
+function gameOver(isWin = false) {
   clearInterval(engineInterval);
 
-  const overlay = document.querySelector("#restart");
+  let overlayId = "restart";
+  if (isWin) {
+    overlayId = "win";
+  }
+
+  const overlay = document.querySelector(`#${overlayId}`);
   overlay.classList.remove("overlay--hide");
   overlay.querySelector("button").focus();
 }
@@ -85,10 +112,7 @@ function updateScore() {
 }
 
 function startEngine() {
-  activeList = [[0, 0]];
-  direction = "R";
-  activateCell(0, 0);
-  updateScore();
+  setupStartingPoint();
 
   document.querySelectorAll(`.${ACTIVE_CLASS_NAME}`).forEach((elm) => {
     elm.classList.remove(ACTIVE_CLASS_NAME);
@@ -116,13 +140,18 @@ function startEngine() {
     }
 
     if (r === foodLocation[0] && c === foodLocation[1]) {
+      if (activeList.length === (BOARD_SIZE ** 2) - 1) {
+        gameOver(true);
+        return;
+      }
+
       activeList.push(current);
       insertFood();
       updateScore();
       return;
     }
 
-    gameBoard[current[0]][current[1]].classList.remove(ACTIVE_CLASS_NAME);
+    deactivateCell(current[0], current[1]);
     return;
   }
 
@@ -150,6 +179,7 @@ function startEngine() {
 }
 
 function start() {
+  setupStartingPoint();
   hideOverlays();
   insertFood();
   startEngine();
