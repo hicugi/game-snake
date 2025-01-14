@@ -1,5 +1,5 @@
 const SPEED = 180;
-const BOARD_SIZE = 4; // pixels
+const BOARD_SIZE = 16; // pixels
 const ACTIVE_CLASS_NAME = "snake";
 const FOOD_CLASS_NAME = "food";
 
@@ -19,8 +19,9 @@ const gameBoard = Array.from(
   { length: BOARD_SIZE },
   () => new Array(BOARD_SIZE),
 );
-let activeList = [];
+let activeList = [[0,0]];
 let direction = "R";
+let nextDirection = "R";
 let foodLocation = null;
 
 /**
@@ -51,6 +52,8 @@ function deactivateCell(r, c) {
     }
     game.appendChild(tr);
   }
+
+  activateCell(0, 0);
 })();
 
 function setupStartingPoint() {
@@ -70,7 +73,7 @@ function insertFood() {
   if (prevFood) prevFood.classList.remove(FOOD_CLASS_NAME);
 
   const availableCells = (() => {
-    const result = new Array((BOARD_SIZE ** 2) - activeList.length);
+    const result = new Array(BOARD_SIZE ** 2 - activeList.length);
     let idx = 0;
 
     for (let r = 0; r < BOARD_SIZE; r++) {
@@ -111,6 +114,43 @@ function updateScore() {
   document.querySelector("#score").innerText = activeList.length;
 }
 
+function move(r, c) {
+  if (r === BOARD_SIZE || r < 0 || c === BOARD_SIZE || c < 0) {
+    gameOver();
+    return;
+  }
+
+  activateCell(r, c);
+
+  let current = [r, c];
+  for (let i = 0; i < activeList.length; i++) {
+    const v = activeList[i];
+
+    if (v[0] === r && v[1] === c) {
+      gameOver();
+      return;
+    }
+
+    activeList[i] = current;
+    current = v;
+  }
+
+  if (r === foodLocation[0] && c === foodLocation[1]) {
+    if (activeList.length === BOARD_SIZE ** 2 - 1) {
+      gameOver(true);
+      return;
+    }
+
+    activeList.push(current);
+    insertFood();
+    updateScore();
+    return;
+  }
+
+  deactivateCell(current[0], current[1]);
+  return;
+}
+
 function startEngine() {
   setupStartingPoint();
 
@@ -118,47 +158,10 @@ function startEngine() {
     elm.classList.remove(ACTIVE_CLASS_NAME);
   });
 
-  function move(r, c) {
-    if (r === BOARD_SIZE || r < 0 || c === BOARD_SIZE || c < 0) {
-      gameOver();
-      return;
-    }
-
-    activateCell(r, c);
-
-    let current = [r, c];
-    for (let i = 0; i < activeList.length; i++) {
-      const v = activeList[i];
-
-      if (v[0] === r && v[1] === c) {
-        gameOver();
-        return;
-      }
-
-      activeList[i] = current;
-      current = v;
-    }
-
-    if (r === foodLocation[0] && c === foodLocation[1]) {
-      if (activeList.length === (BOARD_SIZE ** 2) - 1) {
-        gameOver(true);
-        return;
-      }
-
-      activeList.push(current);
-      insertFood();
-      updateScore();
-      return;
-    }
-
-    deactivateCell(current[0], current[1]);
-    return;
-  }
-
   engineInterval = setInterval(() => {
     const [r, c] = activeList[0];
 
-    switch (direction) {
+    switch (nextDirection) {
       case "R":
         move(r, c + 1);
         break;
@@ -169,18 +172,18 @@ function startEngine() {
 
       case "U":
         move(r - 1, c);
-        break;
-
-      case "D":
+        break; case "D":
         move(r + 1, c);
         break;
     }
+
+    direction = nextDirection;
   }, SPEED);
 }
 
 function start() {
-  setupStartingPoint();
   hideOverlays();
+  setupStartingPoint();
   insertFood();
   startEngine();
 }
@@ -196,5 +199,5 @@ document.body.addEventListener("keydown", (e) => {
   if (direction + value === "LR") return;
   if (direction + value === "RL") return;
 
-  direction = value;
+  nextDirection = value;
 });
