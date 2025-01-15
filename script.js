@@ -189,10 +189,10 @@ function start() {
   startEngine();
 }
 
-document.body.addEventListener("keydown", (e) => {
-  const { key } = e;
-  const value = KEY_MAPPING[key];
-
+/**
+ * @param {string} value - U, R, D, L direction values
+ */
+function moveDirection(value) {
   if (value === undefined) return;
 
   if (direction + value === "UD") return;
@@ -201,4 +201,9 @@ document.body.addEventListener("keydown", (e) => {
   if (direction + value === "RL") return;
 
   nextDirection = value;
+}
+
+document.body.addEventListener("keydown", (e) => {
+  const { key } = e;
+  moveDirection(KEY_MAPPING[key]);
 });

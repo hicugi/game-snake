@@ -2,12 +2,22 @@
 <html lang="en">
   <head>
     <title>Snake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <h1>Snake</h1>
 
     <div class="board">
+      <div class="controls">
+        <div class="controls__wrapper">
+          <button onClick="moveDirection('U')">up</button>
+          <button onClick="moveDirection('R')">right</button>
+          <button onClick="moveDirection('L')">down</button>
+          <button onClick="moveDirection('D')">left</button>
+        </div>
+      </div>
+
       <div id="start" class="overlay">
         <h2>Ready?</h2>
         <button class="btn" onClick="start()">Start</button>

@@ -12,6 +12,57 @@ h2 {
   margin-right: auto;
 }
 
+.controls {
+  --color: #0000001a;
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+.controls__wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%) rotate(45deg);
+  width: 150%;
+  aspect-ratio: 1;
+}
+.controls button {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  border: 1px solid var(--color);
+  background: none;
+  color: transparent;
+}
+.controls button::before {
+  position: absolute;
+  right: 20%;
+  bottom: 20%;
+  transform: rotate(-90deg);
+  border: 3px solid black;
+  border-color: var(--color) var(--color) transparent transparent;
+  width: 40px;
+  height: 40px;
+  content: '';
+}
+.controls button:nth-child(1) {
+  left: 0;
+}
+.controls button:nth-child(2) {
+  left: 50%;
+  transform: rotate(90deg);
+}
+.controls button:nth-child(3) {
+  top: 50%;
+  transform: rotate(270deg);
+}
+.controls button:nth-child(4) {
+  left: 50%;
+  top: 50%;
+  transform: rotate(180deg);
+}
+
 .overlay {
   position: absolute;
   padding-top: 70px;
