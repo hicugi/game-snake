@@ -8,6 +8,13 @@ const KEY_MAPPING = {
   d: "R",
   s: "D",
   a: "L",
+
+  // for vim practice
+  k: "U",
+  l: "R",
+  j: "D",
+  h: "L",
+
   ArrowUp: "U",
   ArrowRight: "R",
   ArrowDown: "D",
