@@ -95,7 +95,7 @@ function insertFood() {
     return result;
   })();
 
-  const idx = parseInt(Math.random() * availableCells.length);
+  const idx = parseInt(Math.random() * (availableCells.length - 1));
   const [r, c] = availableCells[idx];
   gameBoard[r][c].classList.add(FOOD_CLASS_NAME);
   foodLocation = [r, c];
