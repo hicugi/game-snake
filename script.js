@@ -26,7 +26,7 @@ const gameBoard = Array.from(
   { length: BOARD_SIZE },
   () => new Array(BOARD_SIZE),
 );
-let activeList = [[0,0]];
+let activeList = [[0, 0]];
 let direction = "R";
 let nextDirection = "R";
 let foodLocation = null;
@@ -180,7 +180,8 @@ function startEngine() {
 
       case "U":
         move(r - 1, c);
-        break; case "D":
+        break;
+      case "D":
         move(r + 1, c);
         break;
     }
